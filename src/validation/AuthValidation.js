@@ -13,3 +13,7 @@ export const loginValidation = [
     body('username').notEmpty().withMessage('Username Harus Diisi'),
     body('password').notEmpty().withMessage('Password Harus Diisi'),
 ]
+
+export const forgotValidation = [
+    body('email').notEmpty().withMessage('Email Harus Diisi'),
+]

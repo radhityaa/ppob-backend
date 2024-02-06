@@ -83,6 +83,27 @@ export const LoginService = async (request) => {
     }
 }
 
+export const ForgotService = async (request) => {
+    const user = await User.findOne({
+        where: {
+            email: request.email
+        }
+    })
+
+    if (!user) throw new ResponseError(404, 'Email / User Tidak Terdaftar')
+    if (user.isVerif) {
+        // send OTP
+        return Otp.create({
+            code: RandomOtp(),
+            username: user.username,
+            email: user.email
+        })
+    } else {
+        throw new ResponseError(400, 'Akun Belum Divalidasi')
+    }
+
+}
+
 export const BlacklistedTokenService = async (token) => {
     const expiry = jwt.decode(token).exp
     await BlacklistedToken.create({
