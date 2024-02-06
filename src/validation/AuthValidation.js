@@ -8,3 +8,8 @@ export const registerValidation = [
     body('password').notEmpty().withMessage('Password Harus Diisi'),
     body('pin').notEmpty().withMessage('Pin Harus Diisi')
 ]
+
+export const loginValidation = [
+    body('username').notEmpty().withMessage('Username Harus Diisi'),
+    body('password').notEmpty().withMessage('Password Harus Diisi'),
+]

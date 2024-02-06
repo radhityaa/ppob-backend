@@ -52,6 +52,37 @@ export const RegisterService = async (request) => {
     }
 }
 
+export const LoginService = async (request) => {
+    const user = await User.findOne({
+        where: {
+            username: request.username
+        }
+    })
+
+    if (!user) throw new ResponseError(400, 'Username / Password Salah!')
+
+    const cekPassword = await bcrypt.compare(request.password, user.password)
+
+    if (!cekPassword) throw new ResponseError(400, 'Username / Password Salah!')
+
+    if (user.isVerif) {
+        const payload = {
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            saldo: user.saldo
+        }
+
+        return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: 60 * 60 * 1
+        })
+    } else {
+        throw new ResponseError(401, "Akun Belum Verifikasi")
+    }
+}
+
 export const BlacklistedTokenService = async (token) => {
     const expiry = jwt.decode(token).exp
     await BlacklistedToken.create({
