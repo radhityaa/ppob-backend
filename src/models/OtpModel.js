@@ -12,6 +12,9 @@ const Otp = sequelize.define('otps', {
     code: {
         type: DataTypes.INTEGER,
     },
+    unique: {
+        type: DataTypes.STRING,
+    },
     username: {
         type: DataTypes.STRING(100)
     },

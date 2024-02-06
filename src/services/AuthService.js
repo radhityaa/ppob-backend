@@ -6,6 +6,10 @@ import { ResponseError } from "../response/ResponseError.js"
 import bcrypt from 'bcrypt'
 import Otp from "../models/OtpModel.js"
 import RandomOtp from "../utils/RandomOtp.js"
+import crypto from 'crypto'
+import SendOtp from "../utils/SendOtp.js"
+import Token from "../models/TokenModel.js"
+import SendMailForgot from "../utils/SendMailForgot.js"
 
 export const RegisterService = async (request) => {
 
@@ -91,17 +95,45 @@ export const ForgotService = async (request) => {
     })
 
     if (!user) throw new ResponseError(404, 'Email / User Tidak Terdaftar')
+
     if (user.isVerif) {
-        // send OTP
-        return Otp.create({
-            code: RandomOtp(),
-            username: user.username,
-            email: user.email
+        let token = await Token.findOne({
+            where: {
+                userId: user.id
+            }
         })
+
+        if (!token) {
+            token = await new Token({
+                userId: user.id,
+                token: crypto.randomBytes(32).toString("hex"),
+            }).save()
+        }
+
+        const link = `${process.env.BASE_URL}/password-reset/${user.id}/${token.token}`
+        return {
+            user,
+            link
+        }
     } else {
         throw new ResponseError(400, 'Akun Belum Divalidasi')
     }
 
+}
+
+export const ResetPasswordService = async (userId, userToken, password) => {
+    const user = await User.findByPk(userId)
+    if (!user) throw new ResponseError(400, 'Invalid Link Or Expired')
+
+    const token = await Token.findOne({
+        userId: user.id,
+        token: userToken
+    })
+    if (!user) throw new ResponseError(400, 'Invalid Link Or Expired')
+
+    user.password = await bcrypt.hash(password, 12)
+    await user.save()
+    await token.destroy()
 }
 
 export const BlacklistedTokenService = async (token) => {

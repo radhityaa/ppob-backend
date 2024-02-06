@@ -4,6 +4,7 @@ import { logger } from './app/logging.js'
 import User from './models/UserModel.js'
 import BlacklistedToken from './models/BlacklistedToken.js'
 import Otp from './models/OtpModel.js'
+import Token from './models/TokenModel.js'
 
 const PORT = process.env.PORT
 const BASE_URL = process.env.BASE_URL
@@ -24,6 +25,7 @@ const BASE_URL = process.env.BASE_URL
 //     })
 // await BlacklistedToken.sync({ force: true })
 // await Otp.sync({ force: true })
+// await Token.sync({ force: true })
 
 web.listen(PORT, () => {
     logger.info(`Server runnning on ${BASE_URL}`)
