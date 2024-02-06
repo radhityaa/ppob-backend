@@ -1,4 +1,4 @@
-import { body } from 'express-validator'
+import { body, param } from 'express-validator'
 
 export const registerValidation = [
     body('name').notEmpty().withMessage('Nama Harus Diisi'),
@@ -16,4 +16,10 @@ export const loginValidation = [
 
 export const forgotValidation = [
     body('email').notEmpty().withMessage('Email Harus Diisi'),
+]
+
+export const resetPasswordValidation = [
+    param('userId').notEmpty().withMessage('User ID Harus Diisi'),
+    param('token').notEmpty().withMessage('Token Harus Diisi'),
+    body('password').notEmpty().withMessage('Password Harus Diisi'),
 ]
