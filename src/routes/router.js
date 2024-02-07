@@ -8,6 +8,7 @@ import authRoute from './public/AuthRoute.js'
 import otpRoute from './public/OtpRoute.js'
 import productRoute from './public/ProductRoute.js'
 import webhookRoute from './public/WebhookRoute.js'
+import activityRoute from './auth/ActivityRoute.js'
 
 const router = new express.Router()
 
@@ -24,4 +25,6 @@ router.use(digiflazzRoute)
 router.use(settingRoute)
 router.use(userRoute)
 router.use(depositRoute)
+router.use(activityRoute)
+
 export default router
