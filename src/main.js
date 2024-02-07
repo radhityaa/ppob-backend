@@ -8,6 +8,7 @@ import Token from './models/TokenModel.js'
 import Digiflazz from './models/DigiflazzModel.js'
 import Category from './models/CategoryModel.js'
 import Setting from './models/SettingModel.js'
+import Deposit from './models/DepositModel.js'
 
 const PORT = process.env.PORT
 const BASE_URL = process.env.BASE_URL
@@ -48,6 +49,7 @@ const BASE_URL = process.env.BASE_URL
 //             d3: 'knmasdjb21786312knmadaw554dwadm8h231jn2312alishd78whake'
 //         })
 //     })
+// await Deposit.sync({ force: true })
 
 web.listen(PORT, () => {
     logger.info(`Server runnning on ${BASE_URL}`)
