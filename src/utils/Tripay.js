@@ -3,6 +3,7 @@ import Setting from "../models/SettingModel.js"
 import crypto from "crypto"
 import Deposit from "../models/DepositModel.js"
 import Activity from "../models/ActivityModel.js"
+import FormatCurrency from "./FormatCurrency.js"
 
 const CreateInvoiceDeposit = async (user, request) => {
     // Cek Data Tripay
@@ -57,7 +58,7 @@ const CreateInvoiceDeposit = async (user, request) => {
 
     await Activity.create({
         title: `Deposit - ${data.data.reference}`,
-        desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${data.data.reference}, Sejumlah: ${request.nominal}, Pembayaran Melalui: ${data.data.payment_name}`,
+        desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${data.data.reference}, Sejumlah: ${FormatCurrency(request.nominal)}, Saldo Diterima: ${FormatCurrency(data.data.amount_received)}, Pembayaran Melalui: ${data.data.payment_name}`,
         type: 'deposit',
         userId: user.id
     })

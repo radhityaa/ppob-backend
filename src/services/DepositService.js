@@ -2,6 +2,7 @@ import Activity from "../models/ActivityModel.js"
 import Deposit from "../models/DepositModel.js"
 import User from "../models/UserModel.js"
 import { ResponseError } from "../response/ResponseError.js"
+import FormatCurrency from "../utils/FormatCurrency.js"
 import { CreateInvoiceDeposit } from "../utils/Tripay.js"
 
 export const CreateDespositService = async (user, request) => {
@@ -24,7 +25,7 @@ export const CreateDespositService = async (user, request) => {
         }
     }
 
-    const result = Deposit.create({
+    const result = await Deposit.create({
         reference: `DPS-MNL-${Date.now()}`,
         merchant_ref: `DPS-MNL-${Date.now()}`,
         payment_method: 'Manual',
@@ -40,7 +41,7 @@ export const CreateDespositService = async (user, request) => {
 
     await Activity.create({
         title: `Deposit - ${result.reference}`,
-        desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${result.reference}, Sejumlah: ${request.nominal}, Saldo Diterima: ${result.amount_received}, Pembayaran Melalui: ${result.payment_name}`,
+        desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${result.reference}, Sejumlah: ${FormatCurrency(request.nominal)}, Saldo Diterima: ${FormatCurrency(request.nominal)}, Pembayaran Melalui: ${result.payment_name}`,
         type: 'deposit',
         userId: user.id
     })
@@ -156,7 +157,7 @@ export const ApprovalDepositService = async (reference) => {
 
         await Activity.create({
             title: `Deposit - ${deposit.reference}`,
-            desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${deposit.reference}, Sejumlah: ${deposit.nominal}, Saldo Diterima: ${deposit.amount_received}, Pembayaran Melalui: ${data.data.payment_name}`,
+            desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${deposit.reference}, Sejumlah: ${FormatCurrency(deposit.nominal)}, Saldo Diterima: ${FormatCurrency(deposit.amount_received)}, Pembayaran Melalui: ${data.data.payment_name}`,
             type: 'deposit',
             userId: user.id
         })
