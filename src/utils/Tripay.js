@@ -2,6 +2,7 @@ import axios from "axios"
 import Setting from "../models/SettingModel.js"
 import crypto from "crypto"
 import Deposit from "../models/DepositModel.js"
+import Activity from "../models/ActivityModel.js"
 
 const CreateInvoiceDeposit = async (user, request) => {
     // Cek Data Tripay
@@ -51,6 +52,13 @@ const CreateInvoiceDeposit = async (user, request) => {
         amount_received: data.data.amount_received,
         status: data.data.status,
         type: 'otomatis',
+        userId: user.id
+    })
+
+    await Activity.create({
+        title: `Deposit - ${data.data.reference}`,
+        desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${data.data.reference}, Sejumlah: ${request.nominal}, Pembayaran Melalui: ${data.data.payment_name}`,
+        type: 'deposit',
         userId: user.id
     })
 
