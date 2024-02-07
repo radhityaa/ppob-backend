@@ -29,7 +29,7 @@ const BASE_URL = process.env.BASE_URL
 // await BlacklistedToken.sync({ force: true })
 // await Otp.sync({ force: true })
 // await Token.sync({ force: true })
-// await Digiflazz.sync({ force: true })
+// await Digifl azz.sync({ force: true })
 // await Category.sync({ force: true })
 // await Setting.sync({ force: true })
 //     .then(async function () {
