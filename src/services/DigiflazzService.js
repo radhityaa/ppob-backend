@@ -1,9 +1,10 @@
 import axios from "axios"
+import md5 from 'md5'
+import { Sequelize } from "sequelize"
+import slugify from "slugify"
+import Digiflazz from "../models/DigiflazzModel.js"
 import Setting from "../models/SettingModel.js"
 import { ResponseError } from "../response/ResponseError.js"
-import md5 from 'md5'
-import Digiflazz from "../models/DigiflazzModel.js"
-import { Sequelize } from "sequelize"
 
 export const GetDigiflazzService = async () => {
     const settingDigiflazz = await Setting.findOne({
@@ -36,11 +37,15 @@ export const GetDigiflazzService = async () => {
         for (const item of data) {
             // Mencari product berdasarkan buyer_sku_code
             const product = await Digiflazz.findOne({ where: { buyer_sku_code: item.buyer_sku_code } })
+            const slug = slugify(item.product_name, {
+                lower: true
+            })
 
             if (product) {
                 // Jika produk ditemukan, selalu update dengan data baru
                 await product.update({
                     product_name: item.product_name,
+                    slug: slug,
                     category: item.category,
                     brand: item.brand,
                     type: item.type,
@@ -59,6 +64,7 @@ export const GetDigiflazzService = async () => {
                 // Jika produk tidak ditemukan, buat entri baru
                 await Digiflazz.create({
                     product_name: item.product_name,
+                    slug: slug,
                     category: item.category,
                     brand: item.brand,
                     type: item.type,

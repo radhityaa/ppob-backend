@@ -10,6 +10,7 @@ const Digiflazz = sequelize.define('products_digiflazz', {
         autoIncrement: true
     },
     product_name: DataTypes.STRING,
+    slug: DataTypes.STRING,
     category: DataTypes.STRING,
     brand: DataTypes.STRING,
     type: DataTypes.STRING,
