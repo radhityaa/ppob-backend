@@ -1,13 +1,13 @@
 import express from 'express'
-import authRoute from './public/AuthRoute.js'
-import otpRoute from './public/OtpRoute.js'
 import { AuthMiddleware } from '../middleware/AuthMiddleware.js'
+import depositRoute from './auth/DepositRoute.js'
 import digiflazzRoute from './auth/DigiflazzRoute.js'
 import settingRoute from './auth/SettingRoute.js'
-import productRoute from './public/ProductRoute.js'
 import userRoute from './auth/UserRoute.js'
-import depositRoute from './auth/DepositRoute.js'
-import depositPublicRoute from './public/DepositPublicRoute.js'
+import authRoute from './public/AuthRoute.js'
+import otpRoute from './public/OtpRoute.js'
+import productRoute from './public/ProductRoute.js'
+import webhookRoute from './public/WebhookRoute.js'
 
 const router = new express.Router()
 
@@ -15,7 +15,7 @@ const router = new express.Router()
 router.use(authRoute)
 router.use(otpRoute)
 router.use(productRoute)
-router.use(depositPublicRoute)
+router.use(webhookRoute)
 
 // Auth Route
 router.use(AuthMiddleware)

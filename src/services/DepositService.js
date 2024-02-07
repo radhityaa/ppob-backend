@@ -40,6 +40,43 @@ export const CreateDespositService = async (user, request) => {
 
 }
 
+export const GetAllDepositService = async (request) => {
+    // Pagination Parameters
+    const page = parseInt(request.query.page, 10) || 1
+    const limit = parseInt(request.query.limit, 10) || 10
+    const startIndex = (page - 1) * limit
+
+    // Sorting Options
+    const orderOptions = [['createdAt', 'desc']]
+
+    // Query
+    const { count, rows } = await Deposit.findAndCountAll({
+        order: orderOptions,
+        limit: limit,
+        offset: startIndex
+    })
+
+    const result = {}
+
+    if (startIndex + limit < count) {
+        result.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        result.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+
+    result.data = rows
+
+    return result
+}
+
 export const DetailDepositService = async (reference) => {
     const deposit = await Deposit.findOne({
         where: {
