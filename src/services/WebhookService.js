@@ -4,6 +4,7 @@ import { ResponseError } from "../response/ResponseError.js"
 import Deposit from "../models/DepositModel.js"
 import User from "../models/UserModel.js"
 import Activity from "../models/ActivityModel.js"
+import FormatCurrency from "../utils/FormatCurrency.js"
 
 export const WehbookTripayService = async (req) => {
     const settingTripay = await Setting.findOne({ where: { name: 'tripay' } })
@@ -57,7 +58,7 @@ export const WehbookTripayService = async (req) => {
 
                     await Activity.create({
                         title: `Deposit - ${invoice.reference}`,
-                        desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${invoice.reference}, Sejumlah: ${invoice.amount}, Saldo Diterima: ${invoice.amount_received}, Pembayaran Melalui: ${invoice.payment_name}`,
+                        desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${invoice.reference}, Sejumlah: ${FormatCurrency(invoice.amount)}, Saldo Diterima: ${FormatCurrency(invoice.amount_received)}, Pembayaran Melalui: ${invoice.payment_name}`,
                         type: 'deposit',
                         userId: user.id
                     })
