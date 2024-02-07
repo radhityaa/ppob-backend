@@ -52,6 +52,7 @@ export const RegisterService = async (request) => {
         saldo: newUser.saldo,
         isAdmin: newUser.isAdmin,
         isVerif: newUser.isVerif,
+        status: newUser.status,
         otp: dataOtp.code
     }
 }
@@ -69,6 +70,8 @@ export const LoginService = async (request) => {
 
     if (!cekPassword) throw new ResponseError(400, 'Username / Password Salah!')
 
+    if (!user.status) throw new ResponseError(400, 'Akun Telah Dinonaktifkan, Silahkan Hubungi Admin!')
+
     if (user.isVerif) {
         const payload = {
             id: user.id,
@@ -76,7 +79,10 @@ export const LoginService = async (request) => {
             username: user.username,
             email: user.email,
             phone: user.phone,
-            saldo: user.saldo
+            saldo: user.saldo,
+            isVerif: user.isVerif,
+            isAdmin: user.isAdmin,
+            status: user.status
         }
 
         return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
