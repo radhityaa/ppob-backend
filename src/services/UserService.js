@@ -1,4 +1,22 @@
 import User from "../models/UserModel.js"
+import { ResponseError } from "../response/ResponseError.js"
+import bcrypt from 'bcrypt'
+
+export const CreateUserService = async (request) => {
+    const data = await User.findOne({
+        where: {
+            username: request.username,
+            email: request.email
+        }
+    })
+
+    if (data) throw new ResponseError(400, 'Username / Email Sudah Terdaftar')
+
+    request.password = await bcrypt.hash(request.password, 12)
+    request.pin = await bcrypt.hash(request.pin, 12)
+
+    return User.create(request)
+}
 
 export const GetAllUsersService = async (request) => {
     // Pagination Parameters
@@ -53,4 +71,36 @@ export const GetAllUsersService = async (request) => {
     result.data = rows
 
     return result
+}
+
+export const DetailUserService = async (username) => {
+    const data = await User.findOne({ where: { username: username } })
+
+    if (!data) throw new ResponseError(404, 'Data User Tidak Ditemukan')
+
+    return data
+}
+
+export const UpdateUserService = async (username, request) => {
+    const data = await User.findOne({ where: { username: username } })
+
+    if (!data) throw new ResponseError(404, 'Data User Tidak Ditemukan')
+
+    if (request.password) {
+        request.password = await bcrypt.hash(request.password, 12)
+    }
+
+    if (request.pin) {
+        request.pin = await bcrypt.hash(request.pin, 12)
+    }
+
+    return data.update(request)
+}
+
+export const DeleteUserService = async (username) => {
+    const data = await User.findOne({ where: { username: username } })
+
+    if (!data) throw new ResponseError(404, 'Data User Tidak Ditemukan')
+
+    return data.destroy()
 }
