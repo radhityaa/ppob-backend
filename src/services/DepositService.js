@@ -1,3 +1,4 @@
+import Activity from "../models/ActivityModel.js"
 import Deposit from "../models/DepositModel.js"
 import User from "../models/UserModel.js"
 import { ResponseError } from "../response/ResponseError.js"
@@ -23,7 +24,7 @@ export const CreateDespositService = async (user, request) => {
         }
     }
 
-    return Deposit.create({
+    const result = Deposit.create({
         reference: `DPS-MNL-${Date.now()}`,
         merchant_ref: `DPS-MNL-${Date.now()}`,
         payment_method: 'Manual',
@@ -37,7 +38,14 @@ export const CreateDespositService = async (user, request) => {
         userId: user.id
     })
 
+    await Activity.create({
+        title: `Deposit - ${result.reference}`,
+        desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${result.reference}, Sejumlah: ${request.nominal}, Saldo Diterima: ${result.amount_received}, Pembayaran Melalui: ${result.payment_name}`,
+        type: 'deposit',
+        userId: user.id
+    })
 
+    return result
 }
 
 export const GetAllDepositService = async (request) => {
@@ -146,6 +154,13 @@ export const ApprovalDepositService = async (reference) => {
             }
         })
 
+        await Activity.create({
+            title: `Deposit - ${deposit.reference}`,
+            desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${deposit.reference}, Sejumlah: ${deposit.nominal}, Saldo Diterima: ${deposit.amount_received}, Pembayaran Melalui: ${data.data.payment_name}`,
+            type: 'deposit',
+            userId: user.id
+        })
+
         await user.update({
             saldo: user.saldo + deposit.amount_received
         })
@@ -154,6 +169,4 @@ export const ApprovalDepositService = async (reference) => {
             status: 'SENT'
         })
     }
-
-
 }

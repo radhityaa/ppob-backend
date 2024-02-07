@@ -3,6 +3,7 @@ import crypto from "crypto"
 import { ResponseError } from "../response/ResponseError.js"
 import Deposit from "../models/DepositModel.js"
 import User from "../models/UserModel.js"
+import Activity from "../models/ActivityModel.js"
 
 export const WehbookTripayService = async (req) => {
     const settingTripay = await Setting.findOne({ where: { name: 'tripay' } })
@@ -53,6 +54,13 @@ export const WehbookTripayService = async (req) => {
                 case 'PAID':
                     await invoice.update({ status: 'PAID' })
                     const user = await User.findOne({ where: { id: invoice.user.id } })
+
+                    await Activity.create({
+                        title: `Deposit - ${invoice.reference}`,
+                        desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${invoice.reference}, Sejumlah: ${invoice.amount}, Saldo Diterima: ${invoice.amount_received}, Pembayaran Melalui: ${invoice.payment_name}`,
+                        type: 'deposit',
+                        userId: user.id
+                    })
 
                     await user.update({ saldo: user.saldo + amount_received })
                     break;
