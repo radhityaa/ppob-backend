@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { isTokenBlacklistedService } from '../services/AuthService'
+import { isTokenBlacklistedService } from '../services/AuthService.js'
 
 export const AuthMiddleware = async (req, res, next) => {
     const authHeader = req.headers.authorization

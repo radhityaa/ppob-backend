@@ -1,6 +1,8 @@
 import express from 'express'
 import authRoute from './public/AuthRoute.js'
 import otpRoute from './public/OtpRoute.js'
+import { AuthMiddleware } from '../middleware/AuthMiddleware.js'
+import digiflazzRoute from './auth/DigiflazzRoute.js'
 
 const router = new express.Router()
 
@@ -9,4 +11,6 @@ router.use(authRoute)
 router.use(otpRoute)
 
 // Auth Route
+router.use(AuthMiddleware)
+router.use(digiflazzRoute)
 export default router
