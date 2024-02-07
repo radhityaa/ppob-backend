@@ -21,7 +21,7 @@ const CreateInvoiceDeposit = async (user, request) => {
     const apiKey = settingTripay.d1
     const privateKey = settingTripay.d2
     const merchant_code = settingTripay.d3
-    const merchant_ref = `INV-${Date.now()}`
+    const merchant_ref = `DPS-${Date.now()}`
 
     const signature = crypto.createHmac('sha256', privateKey).update(merchant_code + merchant_ref + price).digest('hex')
     const payload = {

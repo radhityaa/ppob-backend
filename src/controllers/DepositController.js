@@ -1,5 +1,14 @@
 import ResponseSuccess from "../response/ResponseSuccess.js"
-import { ApprovalDepositService, CreateDespositService, DetailDepositService, UpdateDepositeService } from "../services/DepositService.js"
+import { ApprovalDepositService, CreateDespositService, DetailDepositService, GetAllDepositService, UpdateDepositeService } from "../services/DepositService.js"
+
+export const GetAllDepositController = async (req, res, next) => {
+    try {
+        const result = await GetAllDepositService(req)
+        return ResponseSuccess(res, 'Berhasil Menampilkan Data Deposit', result)
+    } catch (e) {
+        next(e)
+    }
+}
 
 export const CreateDepositController = async (req, res, next) => {
     try {

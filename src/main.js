@@ -37,9 +37,9 @@ const BASE_URL = process.env.BASE_URL
 //         await Setting.create({
 //             name: 'tripay',
 //             desc: 'd1 = api key, d2 = private key, d3 = merchant code',
-//             d1: 'DEV-plhjaXjRpSCVh1x2XioZ1idekIuJJGp6tpw9Z9TI',
-//             d2: 'ut9la-wyTZI-IbQaa-EidVR-TQxI5',
-//             d3: 'T19336'
+//             d1: 'DEV-1TnkVMJheFh0QQl5IpGzo9EZ3RSnYPymCIm614FJ',
+//             d2: 'pT37T-VbaCy-tPZqp-JhojK-LDLnS',
+//             d3: 'T29295'
 //         })
 //         await Setting.create({
 //             name: 'digiflazz',
