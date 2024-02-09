@@ -9,6 +9,7 @@ import otpRoute from './public/OtpRoute.js'
 import productRoute from './public/ProductRoute.js'
 import webhookRoute from './public/WebhookRoute.js'
 import activityRoute from './auth/ActivityRoute.js'
+import transactionRoute from './auth/TransactionRoute.js'
 
 const router = new express.Router()
 
@@ -26,5 +27,6 @@ router.use(settingRoute)
 router.use(userRoute)
 router.use(depositRoute)
 router.use(activityRoute)
+router.use(transactionRoute)
 
 export default router

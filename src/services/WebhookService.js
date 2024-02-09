@@ -6,6 +6,7 @@ import User from "../models/UserModel.js"
 import Activity from "../models/ActivityModel.js"
 import FormatCurrency from "../utils/FormatCurrency.js"
 import Mutasi from "../models/MutasiModel.js"
+import Transaction from "../models/TransactionModel.js"
 
 export const WehbookTripayService = async (req) => {
     const settingTripay = await Setting.findOne({ where: { name: 'tripay' } })
@@ -91,5 +92,53 @@ export const WehbookTripayService = async (req) => {
         } catch (e) {
             throw new ResponseError(500, 'Error processing request')
         }
+    }
+}
+
+export const WebhookDigiflazzService = async (req) => {
+    const post_data = JSON.stringify(req.body)
+    const settingDigiflazz = await Setting.findOne({ where: { name: 'digiflazz' } })
+
+    const secret = settingDigiflazz.d3
+    const signature = 'sha1=' + crypto.createHmac('sha1', secret).update(post_data).digest('hex')
+
+    if (req.get('X-Hub-Signature') === signature) {
+        const eventData = req.body.data
+        console.log('Webhook Event Data: ', eventData)
+
+        if (eventData.status === 'Sukses') {
+            return Transaction.update({
+                desc: eventData.message,
+                status: eventData.status,
+                sn: eventData.sn
+            }, {
+                where: { reference: eventData.ref_id }
+            })
+        } else {
+            const transaction = await Transaction.findOne({ where: { reference: eventData.ref_id } })
+            const user = await User.findByPk(transaction.userId)
+
+            await Mutasi.create({
+                title: `Pengembalian Saldo Karna ${eventData.message} - Status: ${eventData.status} / Sejumlah: ${eventData.price}`,
+                type: 'kredit',
+                balance_remaining: eventData.price,
+                userId: transaction.userId
+            })
+
+            await user.update({
+                saldo: user.saldo + eventData.price
+            })
+
+            return Transaction.update({
+                desc: eventData.message,
+                status: eventData.status,
+                sn: eventData.sn
+            }, {
+                where: { reference: eventData.ref_id }
+            })
+        }
+
+    } else {
+        throw new ResponseError(500, 'Invalid signature. Webhook ignored')
     }
 }
