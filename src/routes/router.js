@@ -10,6 +10,7 @@ import productRoute from './public/ProductRoute.js'
 import webhookRoute from './public/WebhookRoute.js'
 import activityRoute from './auth/ActivityRoute.js'
 import transactionRoute from './auth/TransactionRoute.js'
+import postpaidRoute from './auth/PostpaidRoute.js'
 
 const router = new express.Router()
 
@@ -28,5 +29,6 @@ router.use(userRoute)
 router.use(depositRoute)
 router.use(activityRoute)
 router.use(transactionRoute)
+router.use(postpaidRoute)
 
 export default router

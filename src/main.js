@@ -12,6 +12,8 @@ import Deposit from './models/DepositModel.js'
 import Activity from './models/ActivityModel.js'
 import Mutasi from './models/MutasiModel.js'
 import Transaction from './models/TransactionModel.js'
+import Postpaid from './models/PostpaidModel.js'
+import ProductPostpaid from './models/ProductPostpaidModel.js'
 
 const PORT = process.env.PORT
 const BASE_URL = process.env.BASE_URL
@@ -56,6 +58,8 @@ const BASE_URL = process.env.BASE_URL
 // await Activity.sync({ force: true })
 // await Mutasi.sync({ force: true })
 // await Transaction.sync({ force: true })
+// await Postpaid.sync({ force: true })
+// await ProductPostpaid.sync({ force: true })
 
 web.listen(PORT, () => {
     logger.info(`Server runnning on ${BASE_URL}`)
