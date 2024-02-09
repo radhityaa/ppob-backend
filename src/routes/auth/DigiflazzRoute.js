@@ -1,9 +1,11 @@
 import express from 'express'
-import { GetDigiflazzController, GetPostpaidController } from '../../controllers/DigiflazzController.js'
+import { CekSaldoController, GetDigiflazzController, GetPostpaidController } from '../../controllers/DigiflazzController.js'
+import { AdminMiddleware } from '../../middleware/AdminMiddleware.js'
 
 const digiflazzRoute = express.Router()
 
-digiflazzRoute.post('/api/digiflazz/get', GetDigiflazzController)
-digiflazzRoute.post('/api/digiflazz/postpaid/get', GetPostpaidController)
+digiflazzRoute.post('/api/digiflazz/get', AdminMiddleware, GetDigiflazzController)
+digiflazzRoute.post('/api/digiflazz/postpaid/get', AdminMiddleware, GetPostpaidController)
+digiflazzRoute.post('/api/digiflazz/cek-saldo', AdminMiddleware, CekSaldoController)
 
 export default digiflazzRoute

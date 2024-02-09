@@ -176,3 +176,33 @@ export const GetPostpaidService = async () => {
         throw new ResponseError(500, e.message)
     }
 }
+
+export const CekSaldoService = async () => {
+    const settingDigiflazz = await Setting.findOne({
+        where: {
+            name: 'digiflazz'
+        }
+    })
+
+    if (!settingDigiflazz) throw new ResponseError(400, 'Pengaturan Digiflazz Belum Disetting')
+
+    // Account API Digiflazz
+    const username = settingDigiflazz.d1
+    const apiKey = settingDigiflazz.d2
+    const type = 'depo'
+
+    // Request Data API Digiflazz
+    const request = {
+        cmd: 'deposit',
+        username: username,
+        sign: md5(username + apiKey + type)
+    }
+
+    try {
+        const { data } = await axios.post('https://api.digiflazz.com/v1/cek-saldo', request)
+        return data.data
+
+    } catch (e) {
+        throw new ResponseError(500, e.message)
+    }
+}
