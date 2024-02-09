@@ -1,10 +1,19 @@
 import ResponseSuccess from "../response/ResponseSuccess.js"
-import { CreatePostpaidService, DetailPostpaidService, GetAllPostpaidService, GetUserPostpaidService, InqPostpaidService } from "../services/PostpaidService.js"
+import { CreatePostpaidService, DetailPostpaidService, GetAllPostpaidService, GetUserPostpaidService, InqPostpaidService, InqTokenService } from "../services/PostpaidService.js"
 
 export const InqPostpaidController = async (req, res, next) => {
     try {
         const result = await InqPostpaidService(req.body)
         return ResponseSuccess(res, 'Berhasil Melakukan Pengecekan Tagihan', result)
+    } catch (e) {
+        next(e)
+    }
+}
+
+export const InqTokenController = async (req, res, next) => {
+    try {
+        const result = await InqTokenService(req.body)
+        return ResponseSuccess(res, 'Berhasil Melakukan Pengecekan', result)
     } catch (e) {
         next(e)
     }

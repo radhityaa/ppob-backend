@@ -191,3 +191,21 @@ export const DigiflazzInqPasca = async (detail) => {
         return e.response.data
     }
 }
+
+export const DigiflazzInqToken = async (detail) => {
+    const target = detail.target
+
+    try {
+        const request = {
+            commands: "pln-subscribe",
+            customer_no: target,
+        }
+
+        const { data } = await axios.post('https://api.digiflazz.com/v1/transaction', request)
+
+        return data.data
+    } catch (e) {
+        console.error("DigiflazzInqPLN error:", e.response.data)
+        return e.response.data
+    }
+}

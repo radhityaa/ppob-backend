@@ -1,9 +1,9 @@
+import bcrypt from "bcrypt"
 import Postpaid from "../models/PostpaidModel.js"
 import ProductPostpaid from "../models/ProductPostpaidModel.js"
 import User from "../models/UserModel.js"
 import { ResponseError } from "../response/ResponseError.js"
-import { DigiflazzInqPasca, DigiflazzPostpaid } from "../utils/Digiflazz.js"
-import bcrypt from "bcrypt"
+import { DigiflazzInqPasca, DigiflazzInqToken, DigiflazzPostpaid } from "../utils/Digiflazz.js"
 
 export const InqPostpaidService = async (request) => {
     const productId = request.productId
@@ -19,6 +19,12 @@ export const InqPostpaidService = async (request) => {
     }
 
     return DigiflazzInqPasca(data)
+}
+
+export const InqTokenService = async (request) => {
+    const target = request.target
+    const data = { target }
+    return DigiflazzInqToken(data)
 }
 
 export const CreatePostpaidService = async (user, request) => {
