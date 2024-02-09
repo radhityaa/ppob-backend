@@ -3,10 +3,12 @@ import md5 from 'md5'
 import { Sequelize } from "sequelize"
 import slugify from "slugify"
 import Digiflazz from "../models/DigiflazzModel.js"
+import ProductPostpaid from "../models/ProductPostpaidModel.js"
 import Setting from "../models/SettingModel.js"
 import { ResponseError } from "../response/ResponseError.js"
-import Postpaid from "../models/PostpaidModel.js"
-import ProductPostpaid from "../models/ProductPostpaidModel.js"
+import { DigiflazzTopupSaldo } from "../utils/Digiflazz.js"
+import User from "../models/UserModel.js"
+import TopupSaldo from "../models/TopupSaldoModel.js"
 
 export const GetDigiflazzService = async () => {
     const settingDigiflazz = await Setting.findOne({
@@ -205,4 +207,78 @@ export const CekSaldoService = async () => {
     } catch (e) {
         throw new ResponseError(500, e.message)
     }
+}
+
+export const DepositSaldoDigiflazzService = async (user, request) => {
+    const userId = user.id
+    const amount = request.amount
+    const bank = request.bank
+    const owner_name = request.owner_name
+
+    const userData = await User.findByPk(userId)
+    if (!userData) throw new ResponseError(404, 'User Tidak Ditemukan')
+
+    const data = {
+        amount,
+        bank,
+        owner_name,
+        userId
+    }
+
+    return DigiflazzTopupSaldo(data)
+}
+
+export const GetAllDepositSaldoDigiflazzService = async (request) => {
+    // Pagination Parameters
+    const page = parseInt(request.query.page, 10) || 1
+    const limit = parseInt(request.query.limit, 10) || 10
+    const startIndex = (page - 1) * limit
+
+    const status = request.query.status
+
+    // Prepare the where conditions based on filters
+    const whereConditions = {}
+
+    if (status !== undefined) {
+        whereConditions.status = status
+    }
+
+    // Sorting Options
+    const orderOptions = [['createdAt', 'desc']]
+
+    // Query
+    const { count, rows } = await TopupSaldo.findAndCountAll({
+        where: whereConditions,
+        order: orderOptions,
+        limit: limit,
+        offset: startIndex
+    })
+
+    const result = {}
+
+    if (startIndex + limit < count) {
+        result.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        result.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+
+    result.data = rows
+
+    return result
+}
+
+export const DetailDepositSaldoDigiflazzService = async (id) => {
+    const data = await TopupSaldo.findOne({ where: { id: id } })
+
+    if (!data) throw new ResponseError(404, 'Data Deposit Tidak Ditemukan')
+
+    return data
 }

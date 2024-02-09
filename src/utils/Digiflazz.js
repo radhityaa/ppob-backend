@@ -1,12 +1,13 @@
-import md5 from "md5"
-import Setting from "../models/SettingModel.js"
 import axios from "axios"
-import Transaction from "../models/TransactionModel.js"
+import md5 from "md5"
 import Activity from "../models/ActivityModel.js"
 import Digiflazz from "../models/DigiflazzModel.js"
 import Mutasi from "../models/MutasiModel.js"
 import Postpaid from "../models/PostpaidModel.js"
 import ProductPostpaid from "../models/ProductPostpaidModel.js"
+import Setting from "../models/SettingModel.js"
+import TopupSaldo from "../models/TopupSaldoModel.js"
+import Transaction from "../models/TransactionModel.js"
 
 export const DigiflazzTopup = async (detail) => {
     const reference = detail.reference
@@ -206,6 +207,52 @@ export const DigiflazzInqToken = async (detail) => {
         return data.data
     } catch (e) {
         console.error("DigiflazzInqPLN error:", e.response.data)
+        return e.response.data
+    }
+}
+
+export const DigiflazzTopupSaldo = async (detail) => {
+    const amount = detail.amount
+    const bank = detail.bank
+    const owner_name = detail.owner_name
+    const userId = detail.userId
+
+    try {
+        const settingDigiflazz = await Setting.findOne({ where: { name: 'digiflazz' } })
+
+        const username = settingDigiflazz.d1
+        const apiKey = settingDigiflazz.d2
+
+        const request = {
+            username,
+            amount,
+            bank: bank,
+            owner_name,
+            sign: md5(username + apiKey + "deposit")
+        }
+
+        const { data } = await axios.post('https://api.digiflazz.com/v1/deposit', request)
+
+        const deposit = await TopupSaldo.create({
+            amount,
+            bank,
+            owner_name,
+            amount_transfer: data.data.amount,
+            notes: data.data.notes,
+            rc: data.data.rc,
+            userId
+        })
+
+        await Activity.create({
+            title: `Deposit Digiflazz - ${amount}`,
+            desc: `Terima kasih sudah melakukan Deposit Digiflazz, Jumlah Deposit: ${amount}, Status: ${deposit.rc}`,
+            type: 'deposit',
+            userId
+        })
+
+        return data.data
+    } catch (e) {
+        console.error("DigiflazzDeposit error:", e.response.data)
         return e.response.data
     }
 }
