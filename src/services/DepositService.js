@@ -1,5 +1,6 @@
 import Activity from "../models/ActivityModel.js"
 import Deposit from "../models/DepositModel.js"
+import Mutasi from "../models/MutasiModel.js"
 import User from "../models/UserModel.js"
 import { ResponseError } from "../response/ResponseError.js"
 import FormatCurrency from "../utils/FormatCurrency.js"
@@ -43,6 +44,7 @@ export const CreateDespositService = async (user, request) => {
         title: `Deposit - ${result.reference}`,
         desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${result.reference}, Sejumlah: ${FormatCurrency(request.nominal)}, Saldo Diterima: ${FormatCurrency(request.nominal)}, Pembayaran Melalui: ${result.payment_name}`,
         type: 'deposit',
+        unique: result.reference,
         userId: user.id
     })
 
@@ -146,7 +148,7 @@ export const ApprovalDepositService = async (reference) => {
 
     if (!deposit) throw new ResponseError(404, 'Data Deposit Tidak Ditemukan')
 
-    if (deposit.status === 'PAID' || deposit.status === 'SENT') {
+    if (deposit.status === 'PAID') {
         throw new ResponseError(400, 'Tidak Dapat Disetujui Dua Kali')
     } else {
         const user = await User.findOne({
@@ -157,8 +159,16 @@ export const ApprovalDepositService = async (reference) => {
 
         await Activity.create({
             title: `Deposit - ${deposit.reference}`,
-            desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${deposit.reference}, Sejumlah: ${FormatCurrency(deposit.nominal)}, Saldo Diterima: ${FormatCurrency(deposit.amount_received)}, Pembayaran Melalui: ${data.data.payment_name}`,
+            desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${deposit.reference}, Sejumlah: ${FormatCurrency(deposit.amount)}, Saldo Diterima: ${FormatCurrency(deposit.amount_received)}, Pembayaran Melalui: ${deposit.payment_name}`,
             type: 'deposit',
+            unique: deposit.reference,
+            userId: user.id
+        })
+
+        await Mutasi.create({
+            title: `Deposit Melalui ${deposit.payment_name}`,
+            type: 'kredit',
+            balance_remaining: deposit.amount_received,
             userId: user.id
         })
 
@@ -167,7 +177,7 @@ export const ApprovalDepositService = async (reference) => {
         })
 
         await deposit.update({
-            status: 'SENT'
+            status: 'PAID'
         })
     }
 }

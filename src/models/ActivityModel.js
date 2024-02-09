@@ -19,6 +19,9 @@ const Activity = sequelize.define('activity', {
     type: {
         type: DataTypes.STRING
     },
+    unique: {
+        type: DataTypes.STRING
+    },
     isRead: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

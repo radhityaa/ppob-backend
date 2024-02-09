@@ -60,6 +60,7 @@ const CreateInvoiceDeposit = async (user, request) => {
         title: `Deposit - ${data.data.reference}`,
         desc: `Menunggu Pembayaran Untuk Deposit Dengan Nomor Reference: ${data.data.reference}, Sejumlah: ${FormatCurrency(request.nominal)}, Saldo Diterima: ${FormatCurrency(data.data.amount_received)}, Pembayaran Melalui: ${data.data.payment_name}`,
         type: 'deposit',
+        unique: data.data.reference,
         userId: user.id
     })
 

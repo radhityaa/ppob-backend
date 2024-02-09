@@ -17,7 +17,7 @@ const Mutasi = sequelize.define('mutasi', {
         type: DataTypes.TEXT
     },
     balance_remaining: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.STRING,
         defaultValue: false
     },
 }, {
