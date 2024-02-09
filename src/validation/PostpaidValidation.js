@@ -9,3 +9,7 @@ export const createPostpaidValidation = [
 export const detailPostpaidValidation = [
     param('reference').notEmpty().withMessage('Reference Harus Diisi')
 ]
+
+export const inqTokenPostpaidValidation = [
+    body('target').notEmpty().withMessage('Tujuan Harus Diisi')
+]
