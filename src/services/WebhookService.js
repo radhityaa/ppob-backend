@@ -5,6 +5,7 @@ import Deposit from "../models/DepositModel.js"
 import User from "../models/UserModel.js"
 import Activity from "../models/ActivityModel.js"
 import FormatCurrency from "../utils/FormatCurrency.js"
+import Mutasi from "../models/MutasiModel.js"
 
 export const WehbookTripayService = async (req) => {
     const settingTripay = await Setting.findOne({ where: { name: 'tripay' } })
@@ -60,6 +61,14 @@ export const WehbookTripayService = async (req) => {
                         title: `Deposit - ${invoice.reference}`,
                         desc: `Pembayaran Berhasil Untuk Deposit Dengan Nomor Reference: ${invoice.reference}, Sejumlah: ${FormatCurrency(invoice.amount)}, Saldo Diterima: ${FormatCurrency(invoice.amount_received)}, Pembayaran Melalui: ${invoice.payment_name}`,
                         type: 'deposit',
+                        unique: invoice.reference,
+                        userId: user.id
+                    })
+
+                    await Mutasi.create({
+                        title: `Deposit Melalui ${invoice.payment_name}`,
+                        type: 'kredit',
+                        balance_remaining: invoice.amount_received,
                         userId: user.id
                     })
 

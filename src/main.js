@@ -10,6 +10,7 @@ import Category from './models/CategoryModel.js'
 import Setting from './models/SettingModel.js'
 import Deposit from './models/DepositModel.js'
 import Activity from './models/ActivityModel.js'
+import Mutasi from './models/MutasiModel.js'
 
 const PORT = process.env.PORT
 const BASE_URL = process.env.BASE_URL
@@ -52,6 +53,7 @@ const BASE_URL = process.env.BASE_URL
 //     })
 // await Deposit.sync({ force: true })
 // await Activity.sync({ force: true })
+// await Mutasi.sync({ force: true })
 
 web.listen(PORT, () => {
     logger.info(`Server runnning on ${BASE_URL}`)
