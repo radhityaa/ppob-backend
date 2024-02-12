@@ -1,5 +1,5 @@
 import ResponseSuccess from "../response/ResponseSuccess.js"
-import { CreateUserService, DeleteUserService, DetailUserService, GetAllUsersService, UpdateUserService } from "../services/UserService.js"
+import { CreateUserService, DeleteUserService, DetailUserService, GetAllUsersService, UpdateUserService, UserCurrentService } from "../services/UserService.js"
 
 export const CreateUserController = async (req, res, next) => {
     try {
@@ -22,6 +22,18 @@ export const GetAllUsersController = async (req, res, next) => {
 export const DetailUserController = async (req, res, next) => {
     try {
         const result = await DetailUserService(req.params.username)
+        return ResponseSuccess(res, 'Berhasil Menampilkan Data User', result)
+    } catch (e) {
+        next(e)
+    }
+}
+
+export const UserCurrentController = async (req, res, next) => {
+    const authHeader = req.headers.authorization
+    const token = authHeader && authHeader.split(' ')[1]
+
+    try {
+        const result = await UserCurrentService(token)
         return ResponseSuccess(res, 'Berhasil Menampilkan Data User', result)
     } catch (e) {
         next(e)

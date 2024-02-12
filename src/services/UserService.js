@@ -1,6 +1,7 @@
 import User from "../models/UserModel.js"
 import { ResponseError } from "../response/ResponseError.js"
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export const CreateUserService = async (request) => {
     const data = await User.findOne({
@@ -79,6 +80,22 @@ export const DetailUserService = async (username) => {
     if (!data) throw new ResponseError(404, 'Data User Tidak Ditemukan')
 
     return data
+}
+
+export const UserCurrentService = async (token) => {
+    const user = jwt.decode(token)
+    const username = user.username
+
+    if (!user) throw new ResponseError(403, 'Unauthorized')
+
+    return User.findOne({
+        where: {
+            username: username
+        },
+        attributes: {
+            exclude: ['password', 'pin']
+        }
+    })
 }
 
 export const UpdateUserService = async (username, request) => {

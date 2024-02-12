@@ -1,7 +1,9 @@
+import { ResponseError } from "../response/ResponseError.js"
 import ResponseSuccess from "../response/ResponseSuccess.js"
 import { ForgotService, LoginService, RegisterService, ResetPasswordService } from "../services/AuthService.js"
 import SendMailForgot from "../utils/SendMailForgot.js"
 import SendOtp from "../utils/SendOtp.js"
+import jwt from 'jsonwebtoken'
 
 export const RegisterController = async (req, res, next) => {
     try {
@@ -41,4 +43,23 @@ export const ResetPasswordController = async (req, res, next) => {
     } catch (e) {
         next(e)
     }
+}
+
+export const AuthenticateToken = async (req, res, next) => {
+    const authHeader = req.headers.authorization
+    const token = authHeader && authHeader.split(' ')[1]
+
+    if (!token) return res.status(403).json({
+        error: true,
+        message: 'Unauthorized'
+    })
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.status(403).json({
+            error: true,
+            message: err.message
+        })
+
+        return ResponseSuccess(res, 'Secure')
+    })
 }
