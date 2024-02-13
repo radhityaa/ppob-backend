@@ -4,7 +4,7 @@ import Mutasi from "../models/MutasiModel.js"
 import User from "../models/UserModel.js"
 import { ResponseError } from "../response/ResponseError.js"
 import FormatCurrency from "../utils/FormatCurrency.js"
-import { CreateInvoiceDeposit } from "../utils/Tripay.js"
+import { CreateInvoiceDeposit, DetailPayment } from "../utils/Tripay.js"
 
 export const CreateDespositService = async (user, request) => {
 
@@ -25,6 +25,7 @@ export const CreateDespositService = async (user, request) => {
             throw new ResponseError(500, e)
         }
     }
+
 
     const result = await Deposit.create({
         reference: `DPS-MNL-${Date.now()}`,
@@ -88,6 +89,44 @@ export const GetAllDepositService = async (request) => {
     return result
 }
 
+export const GetAllDepositUserService = async (request, user) => {
+    // Pagination Parameters
+    const page = parseInt(request.query.page, 10) || 1
+    const limit = parseInt(request.query.limit, 10) || 10
+    const startIndex = (page - 1) * limit
+
+    // Sorting Options
+    const orderOptions = [['createdAt', 'desc']]
+
+    // Query
+    const { count, rows } = await Deposit.findAndCountAll({
+        where: { userId: user.id },
+        order: orderOptions,
+        limit: limit,
+        offset: startIndex
+    })
+
+    const result = {}
+
+    if (startIndex + limit < count) {
+        result.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        result.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+
+    // result.data = rows
+
+    return rows
+}
+
 export const DetailDepositService = async (reference) => {
     const deposit = await Deposit.findOne({
         where: {
@@ -104,9 +143,17 @@ export const DetailDepositService = async (reference) => {
         ]
     })
 
+
     if (!deposit) throw new ResponseError(404, 'Data Deposit Tidak Ditemukan')
 
-    return deposit
+    if (deposit.payment_method === 'Manual') {
+        return deposit
+    } else {
+        const detailTripay = await DetailPayment(deposit.reference)
+        return detailTripay.data
+    }
+
+
 }
 
 export const UpdateDepositeService = async (reference, request) => {

@@ -1,3 +1,4 @@
+import BlacklistedToken from "../models/BlacklistedToken.js"
 import User from "../models/UserModel.js"
 import { ResponseError } from "../response/ResponseError.js"
 import bcrypt from 'bcrypt'
@@ -120,4 +121,15 @@ export const DeleteUserService = async (username) => {
     if (!data) throw new ResponseError(404, 'Data User Tidak Ditemukan')
 
     return data.destroy()
+}
+
+export const LogoutService = async (request) => {
+    const authHeader = request.headers.authorization
+    const token = authHeader && authHeader.split(" ")[1]
+    const expiry = jwt.decode(token).exp
+
+    await BlacklistedToken.create({
+        token,
+        expiry: new Date(expiry * 1000)
+    })
 }

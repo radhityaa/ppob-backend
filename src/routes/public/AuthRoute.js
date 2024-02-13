@@ -1,7 +1,7 @@
 import express from 'express'
+import { ForgotController, LoginController, RegisterController, ResetPasswordController } from '../../controllers/AuthController.js'
 import { forgotValidation, loginValidation, registerValidation, resetPasswordValidation } from '../../validation/AuthValidation.js'
 import validation from '../../validation/validation.js'
-import { ForgotController, LoginController, RegisterController, ResetPasswordController } from '../../controllers/AuthController.js'
 
 const authRoute = express.Router()
 

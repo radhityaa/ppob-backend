@@ -1,5 +1,5 @@
 import ResponseSuccess from "../response/ResponseSuccess.js"
-import { CreateUserService, DeleteUserService, DetailUserService, GetAllUsersService, UpdateUserService, UserCurrentService } from "../services/UserService.js"
+import { CreateUserService, DeleteUserService, DetailUserService, GetAllUsersService, LogoutService, UpdateUserService, UserCurrentService } from "../services/UserService.js"
 
 export const CreateUserController = async (req, res, next) => {
     try {
@@ -57,6 +57,16 @@ export const DeleteUserController = async (req, res, next) => {
     try {
         const result = await DeleteUserService(username)
         return ResponseSuccess(res, 'User Berhasil Dihapus', result)
+    } catch (e) {
+        next(e)
+    }
+}
+
+export const LogoutController = async (req, res, next) => {
+    try {
+        const result = await LogoutService(req)
+        res.clearCookie('token')
+        return ResponseSuccess(res, 'Berhasil Keluar', result)
     } catch (e) {
         next(e)
     }

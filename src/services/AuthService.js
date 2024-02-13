@@ -1,15 +1,13 @@
+import bcrypt from 'bcrypt'
+import crypto from 'crypto'
+import jwt from 'jsonwebtoken'
 import { Sequelize } from "sequelize"
 import BlacklistedToken from "../models/BlacklistedToken.js"
-import User from "../models/UserModel.js"
-import jwt from 'jsonwebtoken'
-import { ResponseError } from "../response/ResponseError.js"
-import bcrypt from 'bcrypt'
 import Otp from "../models/OtpModel.js"
-import RandomOtp from "../utils/RandomOtp.js"
-import crypto from 'crypto'
-import SendOtp from "../utils/SendOtp.js"
 import Token from "../models/TokenModel.js"
-import SendMailForgot from "../utils/SendMailForgot.js"
+import User from "../models/UserModel.js"
+import { ResponseError } from "../response/ResponseError.js"
+import RandomOtp from "../utils/RandomOtp.js"
 
 export const RegisterService = async (request) => {
 
@@ -45,15 +43,8 @@ export const RegisterService = async (request) => {
     })
 
     return {
-        name: newUser.name,
         username: newUser.username,
-        email: newUser.email,
-        phone: newUser.phone,
-        saldo: newUser.saldo,
-        isAdmin: newUser.isAdmin,
-        isVerif: newUser.isVerif,
-        status: newUser.status,
-        otp: dataOtp.code
+        email: newUser.email
     }
 }
 
@@ -116,7 +107,7 @@ export const ForgotService = async (request) => {
             }).save()
         }
 
-        const link = `${process.env.BASE_URL}/password-reset/${user.id}/${token.token}`
+        const link = `${process.env.FRONTEND_URL}/password-reset/${user.id}/${token.token}`
         return {
             user,
             link
@@ -136,6 +127,7 @@ export const ResetPasswordService = async (userId, userToken, password) => {
         token: userToken
     })
     if (!user) throw new ResponseError(400, 'Invalid Link Or Expired')
+    if (!token) throw new ResponseError(400, 'Invalid Link Or Expired')
 
     user.password = await bcrypt.hash(password, 12)
     await user.save()

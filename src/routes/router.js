@@ -12,6 +12,7 @@ import activityRoute from './auth/ActivityRoute.js'
 import transactionRoute from './auth/TransactionRoute.js'
 import postpaidRoute from './auth/PostpaidRoute.js'
 import { AuthenticateToken } from '../controllers/AuthController.js'
+import tripayRoute from './auth/TripayRoute.js'
 
 const router = new express.Router()
 
@@ -19,6 +20,7 @@ const router = new express.Router()
 router.use(authRoute)
 router.use(otpRoute)
 router.use(productRoute)
+router.use(tripayRoute)
 router.use(webhookRoute)
 
 router.get('/api/protected', AuthenticateToken)

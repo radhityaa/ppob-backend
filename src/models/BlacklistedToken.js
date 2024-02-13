@@ -10,7 +10,7 @@ const BlacklistedToken = sequelize.define('blacklisted_tokens', {
         autoIncrement: true
     },
     token: {
-        type: DataTypes.STRING(255)
+        type: DataTypes.TEXT
     },
     expiry: {
         type: DataTypes.DATE

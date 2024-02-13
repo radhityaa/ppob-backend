@@ -6,21 +6,21 @@ import jwt from 'jsonwebtoken'
 
 export const SendOtpService = async (request) => {
     const codeOtp = RandomOtp()
-    const username = request.username
     const email = request.email
 
     const cekUser = await User.findOne({
         where: {
-            username: username,
             email: email
         }
     })
 
     if (!cekUser) throw new ResponseError(404, 'User Tidak Terdaftar')
 
+    const username = cekUser.username
+
     const cekOtp = await Otp.findOne({
         where: {
-            username: username
+            email: email
         }
     })
 
@@ -30,44 +30,36 @@ export const SendOtpService = async (request) => {
         })
 
         return {
-            name: cekUser.name,
-            email: cekUser.email,
-            username: cekUser.username,
-            phone: cekUser.phone,
-            type: cekUser.type,
-            createdAt: cekUser.createdAt,
-            code: codeOtp,
+            username,
+            email
         }
     }
 
-    const dataOtp = await Otp.create({
-        username: username,
+    await Otp.create({
+        username,
+        email,
         code: codeOtp,
     })
 
     return {
-        name: cekUser.name,
-        email: cekUser.email,
-        username: cekUser.username,
-        phone: cekUser.phone,
-        type: cekUser.type,
-        createdAt: cekUser.createdAt,
-        code: dataOtp.code,
+        username,
+        email
     }
 }
 
 export const OtpValidationService = async (request) => {
     const user = await User.findOne({
         where: {
-            username: request.username
+            email: request.email
         }
     })
 
     if (!user) throw new ResponseError(404, 'User Tidak Ditemukan')
+    if (user.isVerif) throw new ResponseError(403, 'User Sudah Diverifikasi')
 
     const dataOtp = await Otp.findOne({
         where: {
-            username: request.username,
+            username: user.username,
             email: request.email,
             code: request.code
         }
@@ -77,7 +69,7 @@ export const OtpValidationService = async (request) => {
 
     await Otp.destroy({
         where: {
-            username: request.username,
+            username: user.username,
             email: request.email,
             id: dataOtp.id
         }

@@ -4,6 +4,7 @@ import crypto from "crypto"
 import Deposit from "../models/DepositModel.js"
 import Activity from "../models/ActivityModel.js"
 import FormatCurrency from "./FormatCurrency.js"
+import { ResponseError } from "../response/ResponseError.js"
 
 const CreateInvoiceDeposit = async (user, request) => {
     // Cek Data Tripay
@@ -67,6 +68,26 @@ const CreateInvoiceDeposit = async (user, request) => {
     return data.data
 }
 
+const DetailPayment = async (reference) => {
+    const settingTripay = await Setting.findOne({ where: { name: 'tripay' } })
+
+    const apiKey = settingTripay.d1
+
+
+    try {
+        const result = await axios.get('https://tripay.co.id/api-sandbox/transaction/detail?reference=' + reference, {
+            headers: {
+                Authorization: `Bearer ${apiKey}`
+            }
+        })
+
+        return result.data
+    } catch (e) {
+        throw new ResponseError(500, e)
+    }
+}
+
 export {
-    CreateInvoiceDeposit
+    CreateInvoiceDeposit,
+    DetailPayment
 }

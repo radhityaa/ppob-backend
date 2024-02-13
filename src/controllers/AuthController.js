@@ -1,9 +1,10 @@
-import { ResponseError } from "../response/ResponseError.js"
+import jwt from 'jsonwebtoken'
 import ResponseSuccess from "../response/ResponseSuccess.js"
 import { ForgotService, LoginService, RegisterService, ResetPasswordService } from "../services/AuthService.js"
 import SendMailForgot from "../utils/SendMailForgot.js"
 import SendOtp from "../utils/SendOtp.js"
-import jwt from 'jsonwebtoken'
+import BlacklistedToken from '../models/BlacklistedToken.js'
+import { ResponseError } from '../response/ResponseError.js'
 
 export const RegisterController = async (req, res, next) => {
     try {
@@ -46,20 +47,32 @@ export const ResetPasswordController = async (req, res, next) => {
 }
 
 export const AuthenticateToken = async (req, res, next) => {
-    const authHeader = req.headers.authorization
-    const token = authHeader && authHeader.split(' ')[1]
+    try {
+        const authHeader = req.headers.authorization
+        const token = authHeader && authHeader.split(' ')[1]
 
-    if (!token) return res.status(403).json({
-        error: true,
-        message: 'Unauthorized'
-    })
-
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.status(403).json({
+        if (!token) return res.status(403).json({
             error: true,
-            message: err.message
+            message: 'Unauthorized'
         })
 
-        return ResponseSuccess(res, 'Secure')
-    })
+        const cekToken = await BlacklistedToken.findOne({
+            where: {
+                token: token
+            }
+        })
+
+        if (cekToken) throw new ResponseError(403, 'Token Invalid!')
+
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (err) return res.status(403).json({
+                error: true,
+                message: err.message
+            })
+
+            return ResponseSuccess(res, 'Secure')
+        })
+    } catch (e) {
+        next(e)
+    }
 }
