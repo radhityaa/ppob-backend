@@ -1,3 +1,4 @@
+import sequelize from "../app/database.js"
 import Digiflazz from "../models/DigiflazzModel.js"
 import { ResponseError } from "../response/ResponseError.js"
 import { Op } from 'sequelize'
@@ -26,6 +27,10 @@ export const GetAllProductService = async (request) => {
     // Filter Parameters
     const minPrice = parseInt(request.query.minPrice, 10)
     const maxPrice = parseInt(request.query.maxPrice, 10)
+    const category = (request.query.category)
+    const brand = (request.query.brand)
+    const type = (request.query.type)
+    const search = (request.query.search)
 
     // Prepare the where conditions based on filters
     const whereConditions = {}
@@ -38,6 +43,30 @@ export const GetAllProductService = async (request) => {
     if (!isNaN(maxPrice) && maxPrice > 0) {
         whereConditions.price = whereConditions.price || {}
         whereConditions.price[Op.lte] = maxPrice
+    }
+
+    if (category !== undefined) {
+        whereConditions.category = category
+    }
+
+    if (brand !== undefined) {
+        whereConditions.brand = brand
+    }
+
+    if (type !== undefined) {
+        whereConditions.type = type
+    }
+
+    if (search) {
+        whereConditions[Op.or] = [
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('product_name')), 'LIKE', `%${search.toLowerCase()}%`),
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('desc')), 'LIKE', `%${search.toLowerCase()}%`),
+        ]
+    } else {
+        whereConditions[Op.or] = [
+            { product_name: { [Op.ne]: null } }, // Any non-null product_name
+            { desc: { [Op.ne]: null } } // Any non-null desc
+        ];
     }
 
     // Sorting Options
@@ -69,7 +98,5 @@ export const GetAllProductService = async (request) => {
         }
     }
 
-    result.data = rows
-
-    return result
+    return rows
 }
