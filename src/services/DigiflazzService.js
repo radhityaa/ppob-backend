@@ -9,6 +9,7 @@ import { ResponseError } from "../response/ResponseError.js"
 import { DigiflazzTopupSaldo } from "../utils/Digiflazz.js"
 import User from "../models/UserModel.js"
 import TopupSaldo from "../models/TopupSaldoModel.js"
+import Category from "../models/CategoryModel.js"
 
 export const GetDigiflazzService = async () => {
     const settingDigiflazz = await Setting.findOne({
@@ -39,6 +40,11 @@ export const GetDigiflazzService = async () => {
 
         // Looping dan simpan data product ke database
         for (const item of data) {
+            await Category.findOrCreate({
+                where: { name: item.category, brand: item.brand },
+                defaults: { name: item.category, brand: item.brand }
+            })
+
             // Mencari product berdasarkan buyer_sku_code
             const product = await Digiflazz.findOne({ where: { buyer_sku_code: item.buyer_sku_code } })
             const slug = slugify(item.product_name, {

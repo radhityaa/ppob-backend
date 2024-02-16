@@ -13,10 +13,12 @@ import transactionRoute from './auth/TransactionRoute.js'
 import postpaidRoute from './auth/PostpaidRoute.js'
 import { AuthenticateToken } from '../controllers/AuthController.js'
 import tripayRoute from './auth/TripayRoute.js'
+import categoryRoute from './public/CategoryRoute.js'
 
 const router = new express.Router()
 
 // Public Route
+router.use(categoryRoute)
 router.use(authRoute)
 router.use(otpRoute)
 router.use(productRoute)
