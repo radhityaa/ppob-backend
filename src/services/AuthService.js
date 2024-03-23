@@ -55,7 +55,17 @@ export const LoginService = async (request) => {
         }
     })
 
+
     if (!user) throw new ResponseError(400, 'Username / Password Salah!')
+
+    const detailUser = await User.findOne({
+        where: {
+            username: request.username
+        },
+        attributes: {
+            exclude: ['password', 'pin']
+        }
+    })
 
     const cekPassword = await bcrypt.compare(request.password, user.password)
 
@@ -75,10 +85,18 @@ export const LoginService = async (request) => {
             isAdmin: user.isAdmin,
             status: user.status
         }
-
-        return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+        const refreshToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: '10m'
+        })
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: 60 * 60 * 1
         })
+
+        return {
+            accessToken,
+            refreshToken,
+            user: detailUser
+        }
     } else {
         throw new ResponseError(401, "Akun Belum Verifikasi")
     }

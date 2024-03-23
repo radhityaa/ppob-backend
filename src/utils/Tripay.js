@@ -49,7 +49,7 @@ const CreateInvoiceDeposit = async (user, request) => {
         payment_method: data.data.payment_method,
         payment_name: data.data.payment_name,
         amount: data.data.amount,
-        total_fee: data.data.total_fee,
+        total_fee: data.data.fee_customer,
         pay_code: data.data.pay_code,
         amount_received: data.data.amount_received,
         status: data.data.status,

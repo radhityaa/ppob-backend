@@ -14,6 +14,8 @@ import postpaidRoute from './auth/PostpaidRoute.js'
 import { AuthenticateToken } from '../controllers/AuthController.js'
 import tripayRoute from './auth/TripayRoute.js'
 import categoryRoute from './public/CategoryRoute.js'
+import categoryAuthRoute from './auth/CategoryAuthRoute.js'
+import mutasiRoute from './auth/MutasiRoute.js'
 
 const router = new express.Router()
 
@@ -37,5 +39,7 @@ router.use(depositRoute)
 router.use(activityRoute)
 router.use(transactionRoute)
 router.use(postpaidRoute)
+router.use(categoryAuthRoute)
+router.use(mutasiRoute)
 
 export default router

@@ -10,6 +10,8 @@ const Category = sequelize.define('categories', {
         autoIncrement: true
     },
     name: DataTypes.STRING,
+    slug: DataTypes.STRING,
+    image: DataTypes.STRING,
     brand: DataTypes.STRING,
 }, {
     timestamps: true

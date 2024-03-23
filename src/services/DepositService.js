@@ -152,8 +152,6 @@ export const DetailDepositService = async (reference) => {
         const detailTripay = await DetailPayment(deposit.reference)
         return detailTripay.data
     }
-
-
 }
 
 export const UpdateDepositeService = async (reference, request) => {
@@ -227,4 +225,35 @@ export const ApprovalDepositService = async (reference) => {
             status: 'PAID'
         })
     }
+}
+
+export const CancelDepositService = async (reference, user) => {
+    const deposit = await Deposit.findOne({
+        where: {
+            reference: reference,
+            userId: user.id,
+        },
+    })
+
+    if (!deposit) throw new ResponseError(404, 'Data Deposit Tidak Ditemukan')
+    if (deposit.status !== 'UNPAID') throw new ResponseError(404, 'Deposit Tidak Dapat DiCancel')
+
+    return deposit.update({
+        status: 'FAILED'
+    })
+}
+
+export const GetStatusService = async (reference, user) => {
+    const deposit = await Deposit.findOne({
+        where: {
+            reference: reference,
+            userId: user.id
+        },
+        attributes: ['status']
+    })
+
+
+    if (!deposit) throw new ResponseError(404, 'Data Deposit Tidak Ditemukan')
+
+    return deposit
 }

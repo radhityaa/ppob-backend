@@ -19,3 +19,7 @@ export const detailDepositValidation = [
 export const updateDepositValidation = [
     param('reference').notEmpty().withMessage('Reference Harus Diisi')
 ]
+
+export const cancelDepositValidation = [
+    param('reference').notEmpty().withMessage('Reference Harus Diisi')
+]

@@ -1,5 +1,5 @@
 import ResponseSuccess from "../response/ResponseSuccess.js"
-import { ApprovalDepositService, CreateDespositService, DetailDepositService, GetAllDepositService, GetAllDepositUserService, UpdateDepositeService } from "../services/DepositService.js"
+import { ApprovalDepositService, CancelDepositService, CreateDespositService, DetailDepositService, GetAllDepositService, GetAllDepositUserService, GetStatusService, UpdateDepositeService } from "../services/DepositService.js"
 
 export const GetAllDepositController = async (req, res, next) => {
     try {
@@ -50,6 +50,24 @@ export const ApprovalDepositController = async (req, res, next) => {
     try {
         const result = await ApprovalDepositService(req.params.reference)
         return ResponseSuccess(res, 'Deposit Telah Disetujui', result)
+    } catch (e) {
+        next(e)
+    }
+}
+
+export const CancelDepositController = async (req, res, next) => {
+    try {
+        const result = await CancelDepositService(req.params.reference, req.user)
+        return ResponseSuccess(res, 'Deposit Berhasil Dibatalkan', result)
+    } catch (e) {
+        next(e)
+    }
+}
+
+export const GetStatusController = async (req, res, next) => {
+    try {
+        const result = await GetStatusService(req.params.reference, req.user)
+        return ResponseSuccess(res, 'Get Status', result)
     } catch (e) {
         next(e)
     }

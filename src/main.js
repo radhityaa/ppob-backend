@@ -36,7 +36,7 @@ const BASE_URL = process.env.BASE_URL
 // await BlacklistedToken.sync({ force: true })
 // await Otp.sync({ force: true })
 // await Token.sync({ force: true })
-// await Digifl azz.sync({ force: true })
+// await Digiflazz.sync({ force: true })
 // await Category.sync({ force: true })
 // await Setting.sync({ force: true })
 //     .then(async function () {
@@ -59,8 +59,8 @@ const BASE_URL = process.env.BASE_URL
 // await Activity.sync({ force: true })
 // await Mutasi.sync({ force: true })
 // await Transaction.sync({ force: true })
-// await Postpaid.sync({ force: true })
 // await ProductPostpaid.sync({ force: true })
+// await Postpaid.sync({ force: true })
 // await TopupSaldo.sync({ force: true })
 
 web.listen(PORT, () => {

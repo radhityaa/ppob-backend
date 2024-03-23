@@ -1,6 +1,6 @@
 import express from 'express'
-import { ApprovalDepositController, CreateDepositController, DetailDepositController, GetAllDepositController, GetAllDepositUserController, UpdateDepositeController } from '../../controllers/DepositController.js'
-import { createDepositValidation, detailDepositValidation, updateDepositValidation } from '../../validation/DepositValidation.js'
+import { ApprovalDepositController, CancelDepositController, CreateDepositController, DetailDepositController, GetAllDepositController, GetAllDepositUserController, GetStatusController, UpdateDepositeController } from '../../controllers/DepositController.js'
+import { cancelDepositValidation, createDepositValidation, detailDepositValidation, updateDepositValidation } from '../../validation/DepositValidation.js'
 import validation from '../../validation/validation.js'
 import { AdminMiddleware } from '../../middleware/AdminMiddleware.js'
 
@@ -13,5 +13,7 @@ depositRoute.post('/api/deposit/approval/:reference', AdminMiddleware, updateDep
 
 depositRoute.post('/api/deposit', createDepositValidation, validation, CreateDepositController)
 depositRoute.get('/api/deposit/:reference', detailDepositValidation, validation, DetailDepositController)
+depositRoute.patch('/api/deposit/cancel/:reference', cancelDepositValidation, validation, CancelDepositController)
+depositRoute.get('/api/deposit/status/:reference', cancelDepositValidation, validation, GetStatusController)
 
 export default depositRoute
